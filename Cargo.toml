@@ -1,0 +1,7 @@
+[package]
+name = "riui"
+version = "0.1.0"
+authors = ["mswift42 <martin.haesler@gmail.com>"]
+edition = "2018"
+
+[dependencies]
