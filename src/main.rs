@@ -12,8 +12,19 @@ fn load_file(path: &str) -> String {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct theme_data {
+pub struct ThemeData {
+    theme_attrs: Vec<AttrOption>
+}
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct AttrOption {
+    name: String,
+    value: Vec<AttrValue>,
+}
+#[derive(Serialize, Deserialize, Debug)]
+pub struct AttrValue {
+    name: String,
+    value: String,
 }
 
 fn main() {
