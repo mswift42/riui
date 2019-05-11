@@ -1,7 +1,6 @@
 use std::{fs, process};
 use std::io::Read;
 use std::collections::HashSet;
-use serde::{Serialize, Deserialize};
 
 
 fn load_file(path: &str) -> String {
@@ -11,21 +10,8 @@ fn load_file(path: &str) -> String {
     text
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct ThemeData {
-    theme_attrs: Vec<AttrOption>
-}
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct AttrOption {
-    name: String,
-    value: Vec<AttrValue>,
-}
-#[derive(Serialize, Deserialize, Debug)]
-pub struct AttrValue {
-    name: String,
-    value: String,
-}
+
 
 fn main() {
     let txt = load_file("white-sand.xml");
