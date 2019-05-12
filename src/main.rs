@@ -1,6 +1,7 @@
 use std::{fs, process};
 use std::io::Read;
 use std::collections::HashSet;
+use roxmltree::{Node, Document};
 
 
 fn load_file(path: &str) -> String {
@@ -10,7 +11,18 @@ fn load_file(path: &str) -> String {
     text
 }
 
+pub struct AttributeNode<'a, 'd: 'a> {
+    node: Vec<Node<'a, 'd>>
+}
 
+impl<'a, 'd: 'a> AttributeNode<'a, 'd> {
+    pub fn new(doc: &'d Document) -> AttributeNode<'a, 'd> {
+        let an= doc.descendants()
+            .filter(|node| node.tag_name().name() == "attributes")
+            .next().unwrap().children().collect();
+        AttributeNode{node: an}
+    }
+}
 
 
 fn main() {
@@ -29,17 +41,13 @@ fn main() {
 //            println!("{:?} at {},", node.tag_name(), doc.text_pos_at(node.range().start));
 //        }
 //    }
-    let attrs = doc.descendants().filter(|node| node.tag_name().name() == "attributes").count();
+    let attrs: Vec<Node> = doc.descendants().filter(|node| node.tag_name().name() == "attributes")
+        .next().unwrap().children().collect();
 
-    println!("{}", attrs);
+    println!("Attributes: {:?}", attrs);
+    let an = AttributeNode::new(&doc);
+    println!("AttributeNode: {:?}", an.node)
 
-    let mut uris = HashSet::new();
-    for node in doc.descendants().find(|node| node.tag_name().name() == "attributes").unwrap().descendants() {
-        for ns in node.namespaces() {
-            uris.insert((ns.name().unwrap_or("\"\"").to_string(), ns.uri().to_string()));
-        }
-    }
-    println!("{:?}", uris.len());
 
 //    let ch = doc.descendants().find(|node| node.tag_name().name() == "attributes").unwrap()
 //        .descendants().filter_map(|node| node.resolve_tag_name_prefix()).collect();
