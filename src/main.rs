@@ -1,6 +1,5 @@
 use std::{fs, process};
 use std::io::Read;
-use std::collections::HashSet;
 use roxmltree::{Node, Document};
 
 
@@ -18,8 +17,8 @@ pub struct AttributeNode<'a, 'd: 'a> {
 impl<'a, 'd: 'a> AttributeNode<'a, 'd> {
     pub fn new(doc: &'d Document) -> AttributeNode<'a, 'd> {
         let an= doc.descendants()
-            .filter(|node| node.tag_name().name() == "attributes")
-            .next().unwrap().children().collect();
+            .find(|node| node.tag_name().name() == "attributes")
+            .unwrap().children().collect();
         AttributeNode{node: an}
     }
 }
@@ -35,18 +34,27 @@ fn main() {
         }
     };
     println!("Elements count: {}",
-             doc.root().descendants().filter(|n| n.is_element()).count());
-//    for node in doc.descendants() {
-//        if node.is_element() {
-//            println!("{:?} at {},", node.tag_name(), doc.text_pos_at(node.range().start));
-//        }
-//    }
-    let attrs: Vec<Node> = doc.descendants().filter(|node| node.tag_name().name() == "attributes")
-        .next().unwrap().children().collect();
+             doc.root().descendants()
+                 .filter(|n| n.is_element()).count());
+    let attrs: Vec<Node> = doc.descendants()
+        .find(|node| node.tag_name().name() == "attributes")
+        .unwrap().children().collect();
 
     println!("Attributes: {:?}", attrs);
     let an = AttributeNode::new(&doc);
-    println!("AttributeNode: {:?}", an.node)
+    println!("AttributeNode: {:?}", an.node);
+
+    let mut vs = Vec::new();
+    for node in &an.node {
+        let an= node.next_sibling().filter(|node| node.is_element())
+            .map(|node| node.descendants()
+                .filter(|node| node.tag_name().name() == "option"));
+        let _ar = match an {
+            Some(mut v) => vs.push(v.next()),
+            None => println!("None"),
+        };
+    }
+    println!("{:?}", vs)
 
 
 //    let ch = doc.descendants().find(|node| node.tag_name().name() == "attributes").unwrap()
