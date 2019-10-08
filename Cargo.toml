@@ -5,3 +5,4 @@ authors = ["mswift42 <martin.haesler@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+palette = "0.4.1"
